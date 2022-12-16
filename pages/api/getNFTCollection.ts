@@ -11,26 +11,30 @@ export default function handler(
 	res: NextApiResponse<ResponseData>
 ) {
 	const { contract } = req.query;
-	const getNFTCollection = async () => {
-		await Moralis.start({
-			apiKey: process?.env?.MORALIS_KEY,
-			// ...and any other configuration
-		});
+	try {
+		const getNFTCollection = async () => {
+			await Moralis.start({
+				apiKey: process?.env?.MORALIS_KEY,
+				// ...and any other configuration
+			});
 
-		const address = `${contract}`;
+			const address = `${contract}`;
 
-		const chain = EvmChain.ETHEREUM;
+			const chain = EvmChain.ETHEREUM;
 
-		const response = await Moralis.EvmApi.nft.getContractNFTs({
-			address,
-			chain,
-		});
+			const response = await Moralis.EvmApi.nft.getContractNFTs({
+				address,
+				chain,
+			});
 
-		console.log(response.toJSON());
-		return response.toJSON();
-	};
+			console.log(response.toJSON());
+			return response.toJSON();
+		};
 
-	getNFTCollection();
+		getNFTCollection();
 
-	res.status(200).json({ message: "Ok!" });
+		res.status(200).json({ message: "Ok!" });
+	} catch (error) {
+		res.status(404).json({ message: "Error!" });
+	}
 }
